@@ -1,0 +1,19 @@
+{
+    "name": "signalserver",
+    "description": "signal server",
+    "keywords": [],
+    "author": "",
+    "contributors": [],
+    "dependencies": {
+        "express": "^4.17.1",
+        "nodejs-websocket": "^1.7.2",
+        "ws": "^8.2.2"
+    },
+    "private": true,
+    "repository": {
+        "type": "git",
+        "url": ""
+    },
+    "main": "server.js",
+    "version": "0.0.1"
+}
