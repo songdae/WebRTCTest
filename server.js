@@ -3,8 +3,8 @@ const express = require('express');
 
 const app = express();
 
-const server = app.listen(80, () => {
-    console.log('Start Server : port 80');
+const server = app.listen(3001, () => {
+    console.log('Start Server : port 3001');
 });
 
 
