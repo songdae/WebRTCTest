@@ -16,7 +16,8 @@ wss.on('connection', (ws, req) => { // 웹 소켓 연결 시
         dat = message.toString();
         dat_json = JSON.parse(dat);
         console.log(dat);
-        ws.send(dat);
+        ws.setInterval(dat);
+        //ws.send(dat);
         //wss.broadcast(dat,ws);
         //wss.clients.forEach(function each(client)
         //{
@@ -35,11 +36,11 @@ wss.on('connection', (ws, req) => { // 웹 소켓 연결 시
         clearInterval(ws.interval);
     });
 
-    // ws.interval = setInterval(() => {
-    //     if (ws.readyState === ws.OPEN) {
-    //         ws.send('서버에서 클라이언트로 메시지를 보냅니다.');
-    //     }
-    // }, 3000);
+    ws.interval = setInterval((dat) => {
+        if (ws.readyState === ws.OPEN) {
+            ws.send(dat);
+        }
+    }, 3000);
 });
 
 
