@@ -15,7 +15,7 @@ wss.on('connection', (ws, req) => { // 웹 소켓 연결 시
     ws.on('message', (message) => { // 클라이언트로부터 메시지 수신 시
         dat = message.toString();
         dat_json = JSON.parse(dat);
-        wss.broadcast(dat,ws);
+        wss.broadcast1(dat,ws);
     });
 
     ws.on('error', (err) => { // 에러 발생 시
@@ -44,6 +44,14 @@ wss.broadcast = function broadcast(data, sender) {
         }
     });
 };
+
+wss.broadcast1 = function broadcast1(msg) {
+    console.log(msg);
+    wss.clients.forEach(function each(client) {
+        client.send(msg);
+     });
+ };
+
 
 wss.checkDisconnect = function checkDisconnect(data, sender)
 {
