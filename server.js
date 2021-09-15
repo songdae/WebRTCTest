@@ -17,6 +17,12 @@ wss.on('connection', (ws, req) => { // 웹 소켓 연결 시
         dat_json = JSON.parse(dat);
         console.log(dat);
         //wss.broadcast(dat,ws);
+        wss.clients.forEach(function each(client)
+        {
+            if (client !== ws && client.readyState === WebSocket.OPEN)
+                client.send(dat);
+        });
+
     });
 
     ws.on('error', (err) => { // 에러 발생 시
