@@ -3,8 +3,8 @@ const express = require('express');
 
 const app = express();
 
-const server = app.listen(80, () => {
-    console.log('Start Server : port 80');
+const server = app.listen(3001, () => {
+    console.log('Start Server : port 3001');
 });
 
 
@@ -24,7 +24,7 @@ wss.on('connection', (ws, req) => { // 웹 소켓 연결 시
 
     ws.on('close', () => { // 연결 종료 시
         console.log('클라이언트 접속 해제');
-        //clearInterval(ws.interval);
+        clearInterval(ws.interval);
     });
 
     // ws.interval = setInterval(() => {
