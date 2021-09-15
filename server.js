@@ -16,7 +16,11 @@ wss.on('connection', (ws, req) => { // 웹 소켓 연결 시
         dat = message.toString();
         dat_json = JSON.parse(dat);
         console.log(dat);
-        ws.setInterval(dat);
+
+        setTimeout(function() {
+            ws.send(dat);
+        }, 3000);
+
         //ws.send(dat);
         //wss.broadcast(dat,ws);
         //wss.clients.forEach(function each(client)
@@ -35,13 +39,8 @@ wss.on('connection', (ws, req) => { // 웹 소켓 연결 시
         console.log('클라이언트 접속 해제');
         clearInterval(ws.interval);
     });
-
-    ws.interval = setInterval((dat) => {
-        if (ws.readyState === ws.OPEN) {
-            ws.send(dat);
-        }
-    }, 3000);
 });
+
 
 
 wss.broadcast = function broadcast(data, sender) {
