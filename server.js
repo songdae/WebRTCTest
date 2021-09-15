@@ -17,10 +17,11 @@ wss.on('connection', (ws, req) => { // 웹 소켓 연결 시
         dat_json = JSON.parse(dat);
         console.log(dat);
 
-        setTimeout(function() {
-            ws.send(dat);
-        }, 3000);
+        
 
+        wss.broadcast(dat,ws);
+        ws.send(dat);
+        
         //ws.send(dat);
         //wss.broadcast(dat,ws);
         //wss.clients.forEach(function each(client)
@@ -33,7 +34,6 @@ wss.on('connection', (ws, req) => { // 웹 소켓 연결 시
 
     ws.on('error', (err) => { // 에러 발생 시
         console.error(err);
-        CloseEvent
     });
 
     ws.on('close', (reason) => { // 연결 종료 시
