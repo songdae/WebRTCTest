@@ -15,6 +15,7 @@ wss.on('connection', (ws, req) => { // 웹 소켓 연결 시
     ws.on('message', (message) => { // 클라이언트로부터 메시지 수신 시
         dat = message.toString();
         dat_json = JSON.parse(dat);
+        console.log(dat);
         wss.broadcast(dat,ws);
     });
 
