@@ -20,7 +20,7 @@ wss.on('connection', (ws, req) => { // 웹 소켓 연결 시
         
 
         wss.broadcast(dat,ws);
-        ws.send(dat);
+        //ws.send(dat);
         
         //ws.send(dat);
         //wss.broadcast(dat,ws);
