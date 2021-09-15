@@ -33,10 +33,12 @@ wss.on('connection', (ws, req) => { // 웹 소켓 연결 시
 
     ws.on('error', (err) => { // 에러 발생 시
         console.error(err);
+        CloseEvent
     });
 
-    ws.on('close', () => { // 연결 종료 시
+    ws.on('close', (reason) => { // 연결 종료 시
         console.log('클라이언트 접속 해제');
+        console.log(reason);
         clearInterval(ws.interval);
     });
 });
