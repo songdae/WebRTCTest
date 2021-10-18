@@ -59,6 +59,7 @@ io.on('connection', (socket) => {
             for (i in users[data.room])
             {
                 if (users[data.room][i].type == "host")
+                    console.log(sers[data.room][i]);
                     io.sockets.socket(users[data.room][i].socket.id).emit('guestEnter', socket.id);
             }
         }
@@ -91,11 +92,25 @@ io.on('connection', (socket) => {
         io.sockets.socket(data.targetID).emit('getCandidate', {candidate : data.candidate, senderID : data.senderID} );
     });
 
-    
-    socket.on('disconnect',()=>{
+
+    socket.on('disconnect', () => {
         console.log(`[${socketToRoom[socket.id]}]: ${socket.id} exit`);
-        //TODO
-    });
+        // disconnect한 user가 포함된 roomID
+        const roomID = socketToRoom[socket.id];
+        // room에 포함된 유저
+        let room = users[roomID];
+        // room이 존재한다면(user들이 포함된)
+        if (room) {
+            // disconnect user를 제외
+            room = room.filter(user => user.id !== socket.id);
+            users[roomID] = room;
+        }
+        // 어떤 user가 나갔는 지 room의 다른 user들에게 통보
+
+        socket.broadcast.to(room).emit('user_exit', {id: socket.id});
+        console.log("DISCONNECTED");
+    })
+
 
 
 /*
