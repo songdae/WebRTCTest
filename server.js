@@ -52,6 +52,7 @@ io.on('connection', (socket) => {
         
         if (data.type == 'host')    // 소켓주인이 호스트인 경우에
         {   
+            console.log('host connect!');
             socket.emit('host');    //host인 경우 호스트로 전달
         }else //소켓주인이 게스트 인 경우에
         {//게스트 입장시, 호스트에 게스트의 socketID 전달.
