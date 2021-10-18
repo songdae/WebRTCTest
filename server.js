@@ -60,7 +60,8 @@ io.on('connection', (socket) => {
             {
                 if (users[data.room][i].type == "host")
                     console.log(users[data.room][i]);
-                    io.sockets.socket(users[data.room][i].id).emit('guestEnter', socket.id);
+                    io.sockets.to(users[data.room][i].id).emit('guestEnter', socket.id);
+                    //io.sockets.socket(users[data.room][i].id).emit('guestEnter', socket.id);
             }
         }
     });
