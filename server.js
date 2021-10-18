@@ -9,7 +9,7 @@ const io = require('socket.io')(3100, {
 
 let users = {};
 let socketToRoom = {};
-const maximum = 2;
+const maximum = process.env.MAXIMUM || 4;
 
 
 console.log('Starting Socket.IO server, port : 3100');
@@ -28,16 +28,16 @@ io.on('connection', (socket) => {
                 return;
             }
             // 인원이 최대 인원보다 적으면 접속 가능
-            users[data.room].push({id: socket.id});
-            //users[data.room].push({id: socket.id, username : data.user_name});
+            users[data.room].push({id: socket.id, type: data.type}); 
+            //users[data.room].push({id: socket.id, username : data.user_name}); // id 이외에 다른 속성 추가 가능
         } else { // room이 존재하지 않는다면 새로 생성
-            users[data.room] = [{id: socket.id}];
+            users[data.room] = [{id: socket.id, type: data.type}];
         }
         // 해당 소켓이 어느 room에 속해있는 지 알기 위해 저장
         socketToRoom[socket.id] = data.room;
 
         socket.join(data.room);
-        console.log(`[${socketToRoom[socket.id]}]: ${socket.id} enter`);
+        console.log(`[${socketToRoom[socket.id]}]: ${socket.id} enter, type ${data.type}`);
 
         // 본인을 제외한 같은 room의 user array
         const usersInThisRoom = users[data.room].filter(user => user.id !== socket.id);
@@ -46,16 +46,62 @@ io.on('connection', (socket) => {
 
         // 본인에게 해당 user array를 전송
         // 새로 접속하는 user가 이미 방에 있는 user들에게 offer(signal)를 보내기 위해
-        io.sockets.to(socket.id).emit('all_users', usersInThisRoom);
+        // io.sockets.to(socket.id).emit('all_users', usersInThisRoom);
 
-        socket.broadcast.emit('callee');
-
+        //socket.broadcast.emit('callee');
+        
+        if (data.type == 'host')    // 소켓주인이 호스트인 경우에
+        {   
+            socket.emit('host');    //host인 경우 호스트로 전달
+        }else //소켓주인이 게스트 인 경우에
+        {//게스트 입장시, 호스트에 게스트의 socketID 전달.
+            for (i in users[data.room])
+            {
+                if (users[data.room][i].type == "host")
+                    io.sockets.socket(users[data.room][i].socket.id).emit('guestEnter', socket.id);
+            }
+        }
     });
+    //1:N
+    //호스트가 offer 보냄. 타겟 게스트(게스트의 소켓ID)로 sdp보냄.
+    socket.on('offer', data =>{
+        console.log(data.sdp);
+        //console.log(data.type);
+        console.log(data.guestID);
+
+        io.sockets.socket(data.guestID).emit('getOffer', data.sdp);
+    });
+
+    //게스트가 answer 보냄. 호스트(호스트의 소켓ID)로 sdp 보냄
+    socket.on('answer', data =>{
+        console.log(data.sdp);
+        console.log(data.hostID);
+        console.log(data.guestID);
+        
+        io.sockets.socket(data.hostID).emit('getAnswer', {sdp : data.sdp, guestID : data.guestID});
+    });
+
+    //호스트 혹은 게스트가 서로의 소켓ID를 통해 candidate 전달
+    socket.on('candidate', data =>{
+        console.log(data.candidate);
+        console.log(data.targetID);
+        console.log(data.senderID);
+        
+        io.sockets.socket(data.targetID).emit('getCandidate', {candidate : data.candidate, senderID : data.senderID} );
+    });
+
+    
+    socket.on('disconnect',()=>{
+        console.log(`[${socketToRoom[socket.id]}]: ${socket.id} exit`);
+        //TODO
+    });
+
+
+/*
 
 	// 다른 user들에게 offer를 보냄 (자신의 RTCSessionDescription)
     socket.on('offer', sdp => {
         console.log('offer: ' + socket.id);
-        console.log(sdp);
         //dat_json = JSON.parse(sdp.toString());
         //console.log(dat_json);
         // room에는 두 명 밖에 없으므로 broadcast 사용해서 전달
@@ -95,4 +141,5 @@ io.on('connection', (socket) => {
         //console.log(users);
         console.log("DISCONNECTED");
     })
+    */
 });
