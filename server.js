@@ -59,7 +59,7 @@ io.on('connection', (socket) => {
             for (i in users[data.room])
             {
                 if (users[data.room][i].type == "host")
-                    console.log(sers[data.room][i]);
+                    console.log(users[data.room][i]);
                     io.sockets.socket(users[data.room][i].socket.id).emit('guestEnter', socket.id);
             }
         }
