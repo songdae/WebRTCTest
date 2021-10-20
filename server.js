@@ -73,25 +73,27 @@ io.on('connection', (socket) => {
     //1:N
     //호스트가 offer 보냄. 타겟 게스트(게스트의 소켓ID)로 sdp보냄.
     socket.on('offer', data =>{
-        console.log(data.sdp);
+        console.log("offer send,");
         //console.log(data.type);
         console.log(data.socketID);
         //게스트의 소켓아이디로 보냄
         io.to(data.socketID).emit('getOffer', data.sdp);
+        console.log("emit getOffer");
     });
 
     //게스트가 answer 보냄. 호스트(호스트의 소켓ID)로 sdp 보냄
     socket.on('answer', data =>{
-        console.log(data.sdp);
+        console.log("send answer");
         console.log(data.hostID);
         console.log(data.guestID);
         
         io.to(data.hostID).emit('getAnswer', {sdp : data.sdp, guestID : data.guestID});
+        console.log("send getAnswer");
     });
 
     //호스트 혹은 게스트가 서로의 소켓ID를 통해 candidate 전달
     socket.on('candidate', data =>{
-        console.log(data.candidate);
+        console.log("candidate");
         console.log(data.targetID);
         console.log(data.senderID);
         
