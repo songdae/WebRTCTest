@@ -53,15 +53,17 @@ io.on('connection', (socket) => {
         if (data.type == 'host')    // 소켓주인이 호스트인 경우에
         {   
             console.log('host connect!');
-            socket.emit('host');    //host인 경우 호스트로 전달
+            socket.emit('host', socket.id);    //host인 경우 호스트로 전달
         }else //소켓주인이 게스트 인 경우에
         {//게스트 입장시, 호스트에 게스트의 socketID 전달.
+            console.log('guest connect!');
             for (i in users[data.room])
             {
                 if (users[data.room][i].type == "host")
                     console.log(users[data.room][i]);
                     io.sockets.to(users[data.room][i].id).emit('guestEnter', socket.id);
-                    //io.sockets.socket(users[data.room][i].id).emit('guestEnter', socket.id);
+                    //게스트에게 호스트 socketid 전달
+                    socket.emit('guest', {hostsocketid : users[data.room][i].id, guestsocketid : socket.id});
             }
         }
     });
@@ -70,9 +72,9 @@ io.on('connection', (socket) => {
     socket.on('offer', data =>{
         console.log(data.sdp);
         //console.log(data.type);
-        console.log(data.guestID);
-
-        io.sockets.socket(data.guestID).emit('getOffer', data.sdp);
+        console.log(data.socketID);
+        //게스트의 소켓아이디로 보냄
+        io.sockets.socket(data.socketID).emit('getOffer', data.sdp);
     });
 
     //게스트가 answer 보냄. 호스트(호스트의 소켓ID)로 sdp 보냄
@@ -90,7 +92,7 @@ io.on('connection', (socket) => {
         console.log(data.targetID);
         console.log(data.senderID);
         
-        io.sockets.socket(data.targetID).emit('getCandidate', {candidate : data.candidate, senderID : data.senderID} );
+        io.sockets.socket(data.targetID).emit('getCandidate', data);
     });
 
 
