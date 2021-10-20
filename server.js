@@ -92,7 +92,7 @@ io.on('connection', (socket) => {
         console.log(data.targetID);
         console.log(data.senderID);
         
-        io.sockets.socket(data.targetID).emit('getCandidate', data);
+        io.sockets.to(data.targetID).emit('getCandidate', data);
     });
 
 
