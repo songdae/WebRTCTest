@@ -61,7 +61,8 @@ io.on('connection', (socket) => {
             {
                 if (users[data.room][i].type == "host")
                     console.log(users[data.room][i].id);
-                    io.sockets.to(users[data.room][i].id).emit('guestEnter', socket.id);
+                    //io.sockets.to(users[data.room][i].id).emit('guestEnter', socket.id);
+                    io.to(users[data.room][i].id).emit('guestEnter', socket.id);
                     //게스트에게 호스트 socketid 전달
                     socket.emit('guest', {hostsocketid : users[data.room][i].id, guestsocketid : socket.id});
             }
