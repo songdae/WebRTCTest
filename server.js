@@ -77,7 +77,7 @@ io.on('connection', (socket) => {
         //console.log(data.type);
         console.log(data.socketID);
         //게스트의 소켓아이디로 보냄
-        io.to(data.socketID).emit('getOffer', data.sdp);
+        io.to(data.socketID).emit('getOffer', data);
         console.log("emit getOffer");
     });
 
