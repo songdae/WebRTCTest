@@ -84,10 +84,10 @@ io.on('connection', (socket) => {
     //게스트가 answer 보냄. 호스트(호스트의 소켓ID)로 sdp 보냄
     socket.on('answer', data =>{
         console.log("send answer");
-        console.log(data.hostID);
-        console.log(data.guestID);
+        console.log(data.hostsocketid);
+        console.log(data.guestsocketid);
         
-        io.to(data.hostID).emit('getAnswer', {sdp : data.sdp, guestID : data.guestID});
+        io.to(data.hostsocketid).emit('getAnswer', data);
         console.log("send getAnswer");
     });
 
