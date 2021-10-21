@@ -29,7 +29,6 @@ io.on('connection', (socket) => {
             }
             // 인원이 최대 인원보다 적으면 접속 가능
             users[data.room].push({id: socket.id, type: data.type}); 
-            //users[data.room].push({id: socket.id, username : data.user_name}); // id 이외에 다른 속성 추가 가능
         } else { // room이 존재하지 않는다면 새로 생성
             users[data.room] = [{id: socket.id, type: data.type}];
         }
@@ -44,13 +43,7 @@ io.on('connection', (socket) => {
 
         console.log(usersInThisRoom);
 
-        // 본인에게 해당 user array를 전송
-        // 새로 접속하는 user가 이미 방에 있는 user들에게 offer(signal)를 보내기 위해
-        // io.sockets.to(socket.id).emit('all_users', usersInThisRoom);
-
-        //socket.broadcast.emit('callee');
-        
-        if (data.type == 'host')    // 소켓주인이 호스트인 경우에
+        if (data.type == 0)    // 소켓주인이 호스트인 경우에
         {   
             console.log('host connect!');
             socket.emit('host', socket.id);    //host인 경우 호스트로 전달
@@ -59,7 +52,7 @@ io.on('connection', (socket) => {
             console.log('guest connect!');
             for (i in users[data.room])
             {
-                if (users[data.room][i].type == "host")
+                if (users[data.room][i].type == 0)
                 {
                     console.log(users[data.room][i].id);
                     //io.sockets.to(users[data.room][i].id).emit('guestEnter', socket.id);
@@ -73,30 +66,17 @@ io.on('connection', (socket) => {
     //1:N
     //호스트가 offer 보냄. 타겟 게스트(게스트의 소켓ID)로 sdp보냄.
     socket.on('offer', data =>{
-        console.log("offer send,");
-        //console.log(data.type);
-        console.log(data.socketID);
         //게스트의 소켓아이디로 보냄
         io.to(data.socketID).emit('getOffer', data);
-        console.log("emit getOffer");
     });
 
     //게스트가 answer 보냄. 호스트(호스트의 소켓ID)로 sdp 보냄
     socket.on('answer', data =>{
-        console.log("send answer");
-        console.log(data.hostsocketid);
-        console.log(data.guestsocketid);
-        
         io.to(data.hostsocketid).emit('getAnswer', data);
-        console.log("send getAnswer");
     });
 
     //호스트 혹은 게스트가 서로의 소켓ID를 통해 candidate 전달
     socket.on('candidate', data =>{
-        console.log("candidate");
-        console.log(data.targetID);
-        console.log(data.senderID);
-        
         io.to(data.targetID).emit('getCandidate', data);
     });
 
